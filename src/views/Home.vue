@@ -1,18 +1,49 @@
 <template>
-  <div class="home">
-    <img alt="Vue logo" src="../assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
-  </div>
+    <div class="home">
+        <form action="#" method="POST" @submit.prevent="login">
+            <div>
+                <input type="email" name="email" v-model="email" placeholder="Email">
+            </div>
+            <div>
+                <input type="password" name="password" v-model="password" placeholder="Password">
+            </div>
+            <div>
+                <button type="submit">Login</button>
+            </div>
+        </form>
+    </div>
 </template>
 
 <script>
-// @ is an alias to /src
-import HelloWorld from '@/components/HelloWorld.vue'
+    import axios from 'axios';
 
-export default {
-  name: 'Home',
-  components: {
-    HelloWorld
-  }
-}
+    axios.defaults.withCredentials = true;
+    axios.defaults.baseURL = 'http://localhost:8000';
+
+    // @ is an alias to /src
+    // import HelloWorld from '@/components/HelloWorld.vue'
+
+    export default {
+        name: 'Home',
+
+        data() {
+            return {
+                email: '',
+                password: ''
+            }
+        },
+
+        methods: {
+            login() {
+                axios.get('/sanctum/csrf-cookie').then(response => {
+                    axios.post('/login', {
+                        email: this.email,
+                        password: this.password
+                    }).then(response => {
+                        this.$router.push({name: 'Dashboard'});
+                    });
+                });
+            }
+        }
+    }
 </script>
